@@ -6,5 +6,5 @@ The minimum UE required: [UE 22.3](https://www.unrealengine.com/en-US/blog/unrea
 * **The Bulls**: are the number of characters in player's guessed word, which matches in the isogram exactly in the same position.
 * **The Cows** : are the number of characters in player's guessed word, which are also in the isogram but not in the exact position.
 
-![alt text](https://imgur.com/XQTiXes "Game Terminal")
+![Screenshot of Game Terminal](https://github.com/JeJoProjects/Unreal-Udemy/blob/Bulls%26Cows/Section%203%20-%20Bulls%20%26%20Cows%20(2019%20Version)/Screenshot.gif "Game Terminal")
 
