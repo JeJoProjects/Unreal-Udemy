@@ -6,23 +6,21 @@
 #include "Components/ActorComponent.h"
 #include "OpenDoor.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UOpenDoor : public UActorComponent
 {
 	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
-	UOpenDoor();
+private:
+	float TargetYaw{ 90.0f };
 
 protected:
 	// Called when the game starts
 	void BeginPlay() override;
 
-public:	
-	// Called every frame
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	// Sets default values for this component's properties
+	UOpenDoor();
 
-		
+	// Called every frame
+	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 };
