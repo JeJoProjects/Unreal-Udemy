@@ -11,7 +11,11 @@ class BUILDINGESCAPEGAME_API UOpenDoor : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	float TargetYaw{ 90.0f };
+	float InitialYaw{0.0f};
+	float CurrentYaw;
+
+	UPROPERTY(EditAnywhere)
+	float TargetYaw{ 90.f };
 
 protected:
 	// Called when the game starts
