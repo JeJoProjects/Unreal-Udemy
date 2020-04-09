@@ -17,10 +17,18 @@ private:
 	float CurrentYaw;
 
 	float DoorLastOpen{0.0f};
-	const float DoorCloseDelay{20.f};
 
 	UPROPERTY(EditAnywhere)
-	float TargetYaw{90.f};
+	float DoorOpenAngle{90.f};
+	
+	UPROPERTY(EditAnywhere)
+	float DoorOpenSpeed{2.0f};
+
+	UPROPERTY(EditAnywhere)
+	float DoorCloseSpeed{0.8f};
+
+	UPROPERTY(EditAnywhere)
+	float DoorCloseDelay{20.f};
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume *PressurePlate;
