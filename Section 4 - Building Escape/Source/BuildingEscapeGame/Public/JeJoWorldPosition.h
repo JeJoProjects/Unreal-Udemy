@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "JeJoWorldPosition.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogJeJoWorldPosition, Log, All);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoWorldPosition : public UActorComponent
 {

@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "JeJoGrabber.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogJeJoGrabber, Log, All);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
 {

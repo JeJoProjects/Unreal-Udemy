@@ -3,19 +3,22 @@
 #include "JeJoWorldPosition.h"
 #include "GameFramework/Actor.h"
 
+DEFINE_LOG_CATEGORY(LogJeJoWorldPosition)
+
 // Called when the game starts
 void UJeJoWorldPosition::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const FString ObjectName{ GetOwner()->GetName() };
-	const FString ObjectLocation{ GetOwner()->GetActorLocation().ToString() };
+	const FString objectName{ GetOwner()->GetName() };
+	const FString objectLocation{ GetOwner()->GetActorLocation().ToString() };
 
-	// UE_LOG(LogTemp, Warning, TEXT("The %s position in the world is: %s"), *ObjectName, *ObjectLocation);
+	UE_LOG(LogJeJoWorldPosition, Warning, TEXT("The %s position in the world is: %s"), *objectName, *objectLocation);
 }
 
 // Called every frame
-void UJeJoWorldPosition::TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
+void UJeJoWorldPosition::TickComponent(
+	float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
 {
 	Super::TickComponent(deltaTime, tickType, thisTickFunction);
 }

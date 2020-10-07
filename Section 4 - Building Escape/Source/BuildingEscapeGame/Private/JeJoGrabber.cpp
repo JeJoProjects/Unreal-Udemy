@@ -3,6 +3,7 @@
 
 #include "JeJoGrabber.h"
 
+DEFINE_LOG_CATEGORY(LogJeJoGrabber)
 
 void UJeJoGrabber::BeginPlay()
 {
@@ -11,13 +12,15 @@ void UJeJoGrabber::BeginPlay()
 
 UJeJoGrabber::UJeJoGrabber()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  
+	// You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
-void UJeJoGrabber::TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
+void UJeJoGrabber::TickComponent(
+	float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
 {
 	Super::TickComponent(deltaTime, tickType, thisTickFunction);
 	

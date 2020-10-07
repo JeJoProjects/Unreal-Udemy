@@ -7,6 +7,8 @@
 #include "Engine/TriggerVolume.h"
 #include "JeJoOpenDoor.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogJeJoOpenDoor, Log, All);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoOpenDoor : public UActorComponent
 {
@@ -18,22 +20,22 @@ private:
 
 	float DoorLastOpen{ 0.0f };
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	float DoorOpenAngle{ 90.f };
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	float DoorOpenSpeed{ 2.0f };
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	float DoorCloseSpeed{ 0.8f };
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	float DoorCloseDelay{ 20.f };
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	ATriggerVolume* PressurePlate;
 
-	UPROPERTY(EditAnywhere, Category = "UOpenDoor")
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	AActor* ActorThatOpen;
 
 protected:
