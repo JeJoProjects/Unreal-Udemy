@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Grabber.generated.h"
+#include "JeJoGrabber.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class BUILDINGESCAPEGAME_API UGrabber : public UActorComponent
+class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 private:
 
 protected:
@@ -19,8 +19,8 @@ protected:
 
 public:
 	// Sets default values for this component's properties
-	UGrabber();
+	UJeJoGrabber();
 
 	// Called every frame
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
 };
