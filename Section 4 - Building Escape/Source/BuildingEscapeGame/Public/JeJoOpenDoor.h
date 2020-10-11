@@ -15,28 +15,32 @@ class BUILDINGESCAPEGAME_API UJeJoOpenDoor : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	float InitialYaw{ 0.0f };
-	float CurrentYaw;
+	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
+	float initialYaw;
 
-	float DoorLastOpen{ 0.0f };
+	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
+	float currentYaw;
 
-	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float DoorOpenAngle{ 90.f };
-
-	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float DoorOpenSpeed{ 2.0f };
+	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
+	float doorLastOpen;
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float DoorCloseSpeed{ 0.8f };
+	float doorOpenAngle;
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float DoorCloseDelay{ 20.f };
+	float doorOpenSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	ATriggerVolume* PressurePlate;
+	float doorCloseSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	AActor* ActorThatOpen;
+	float doorCloseDelay;
+
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
+	ATriggerVolume* pressurePlate;
+
+	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
+	AActor* actorThatOpen;
 
 protected:
 	// Called when the game starts
