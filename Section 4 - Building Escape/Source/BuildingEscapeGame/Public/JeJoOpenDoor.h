@@ -52,6 +52,9 @@ public:
 	// Called every frame
 	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
 
-	void OpenDoor(const float) noexcept;
-	void CloseDoor(const float) noexcept;
+	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
+	void OpenDoor(const float deltaTime) noexcept;
+
+	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
+	void CloseDoor(const float deltaTime) noexcept;
 };

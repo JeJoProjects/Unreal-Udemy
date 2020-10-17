@@ -6,9 +6,13 @@ public class BuildingEscapeGame : ModuleRules
 {
 	public BuildingEscapeGame(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.NoSharedPCHs;
+		PrivatePCHHeaderFile = "BuildingEscapeGame.h";
+		CppStandard = CppStandardVersion.Cpp17;
+
+		// PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Slate" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
