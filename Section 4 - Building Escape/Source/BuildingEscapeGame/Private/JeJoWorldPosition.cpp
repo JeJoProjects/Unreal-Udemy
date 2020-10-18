@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "JeJoWorldPosition.h"
 #include "GameFramework/Actor.h"
+#include "JeJoWorldPosition.h"
 
 DEFINE_LOG_CATEGORY(LogJeJoWorldPosition)
 

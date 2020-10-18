@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "JeJoOpenDoor.h"
 #include "Engine/World.h"
-#include "GameFramework/PlayerController.h"
+#include "Engine/TriggerVolume.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/PlayerController.h"
+#include "JeJoOpenDoor.h"
 
 DEFINE_LOG_CATEGORY(LogJeJoOpenDoor)
 
@@ -13,32 +14,31 @@ void UJeJoOpenDoor::BeginPlay()
 
 	// set the initial values
 	this->initialYaw = this->currentYaw = GetOwner()->GetActorRotation().Yaw;
-	this->doorOpenAngle += this->initialYaw;
+	this->targetAngle += this->initialYaw;
 
 	// log messages
 	UE_LOG(LogJeJoOpenDoor, Log, TEXT("this->initialYaw: %f"), this->initialYaw);
 	UE_LOG(LogJeJoOpenDoor, Log, TEXT("this->currentYaw: %f"), this->currentYaw);
-	UE_LOG(LogJeJoOpenDoor, Log, TEXT("this->doorOpenAngle: %f"), this->doorOpenAngle);
+	UE_LOG(LogJeJoOpenDoor, Log, TEXT("this->targetAngle: %f"), this->targetAngle);
 
-	if (!pressurePlate)
+	if (!this->pressurePlate)
 	{
-		UE_LOG(LogJeJoOpenDoor, Error, TEXT("No pressure-plate set for: %s !"), *(GetOwner()->GetName()));
+		UE_LOG(LogJeJoOpenDoor, Error, TEXT("No pressure-plate set for: %s!"), *(GetOwner()->GetName()));
 	}
+
 	// set the actor that opens (i.e. Door)
-	this->actorThatOpen = GetWorld()->GetFirstPlayerController()->GetPawn();
+	this->playerActor = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!this->playerActor)
+	{
+		UE_LOG(LogJeJoOpenDoor, Error, TEXT("No player pawn found!"));
+	}
 }
 
 // sets default values for this component's properties
 UJeJoOpenDoor::UJeJoOpenDoor()
 	: initialYaw{ 0.f }
 	, currentYaw{ 0.f }
-	, doorLastOpen{ 0.f }
-	, doorOpenAngle{ 90.f }
-	, doorOpenSpeed{ 2.f }
-	, doorCloseSpeed{ 0.8f }
-	, doorCloseDelay{ 20.f }
-	, pressurePlate{ nullptr }
-	, actorThatOpen{ nullptr }
+	, lastOpenTime{ 0.f }
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -48,56 +48,52 @@ void UJeJoOpenDoor::TickComponent(
 {
 	Super::TickComponent(deltaTime, tickType, thisTickFunction);
 
-	UWorld* world = GetWorld();
-	AActor* actor = GetOwner();
+	const UWorld *const world = GetWorld();
+	const AActor *const ownerActor = GetOwner();
 
-	// component works only if world and the owner actor exists.
-	if (world && actor)
+	// component works only if world and the owner actor exists\n
+	// and the actor overlaps the trigger volume
+	if (world && ownerActor && this->pressurePlate && this->playerActor &&
+		this->pressurePlate->IsOverlappingActor(this->playerActor))
 	{
 		this->OpenDoor(deltaTime);
-		this->doorLastOpen = world->GetTimeSeconds();
+		this->lastOpenTime = world->GetTimeSeconds();
 	}
-#if 0
-	// trigger an action
-	if (this->pressurePlate && this->pressurePlate->IsOverlappingActor(this->actorThatOpen))
+	else if (world && ownerActor && this->pressurePlate && this->playerActor &&
+		(world->GetTimeSeconds() - this->lastOpenTime) > this->delayTime)
 	{
-		OpenDoor(deltaTime);
-		this->doorLastOpen = GetWorld()->GetTimeSeconds();
+		this->CloseDoor(deltaTime);
 	}
-	else
-	{
-		if (GetWorld()->GetTimeSeconds() - this->doorLastOpen > this->doorCloseDelay)
-		{
-			CloseDoor(deltaTime);
-		}
-	}
-#endif
 }
 
 void UJeJoOpenDoor::OpenDoor(const float deltaTime) noexcept
 {
-	if (AActor* actor = GetOwner())
+	if (AActor *const ownerActor = GetOwner())
 	{
 		// debug log message
 		// UE_LOG(LogJeJoOpenDoor, Warning, TEXT("%s"), *(actor->GetActorRotation().ToString()));
 		// UE_LOG(LogJeJoOpenDoor, Warning, TEXT("Yaw: %f"), actor->GetActorRotation().Yaw);
 
-		// rotate from the current door position
-		FRotator rotateDoor{ actor->GetActorRotation() };
+		// rotate from the current door position to target door opening angle
+		FRotator rotateDoor{ ownerActor->GetActorRotation() };
 		rotateDoor.Yaw = this->currentYaw
-			= FMath::FInterpTo(this->currentYaw, this->doorOpenAngle, deltaTime, this->doorOpenSpeed);
-		actor->SetActorRotation(MoveTemp(rotateDoor));
+			= FMath::FInterpTo(this->currentYaw, this->targetAngle, deltaTime, this->openingSpeed);
+		ownerActor->SetActorRotation(MoveTemp(rotateDoor));
 	}
 }
 
 void UJeJoOpenDoor::CloseDoor(const float deltaTime) noexcept
 {
-	UE_LOG(LogJeJoOpenDoor, Warning, TEXT("%s"), *(GetOwner()->GetActorRotation().ToString()));
-	UE_LOG(LogJeJoOpenDoor, Warning, TEXT("Yaw: %f"), GetOwner()->GetActorRotation().Yaw);
+	if (AActor *const ownerActor = GetOwner())
+	{
+		// debug log message
+		// UE_LOG(LogJeJoOpenDoor, Warning, TEXT("%s"), *(actor->GetActorRotation().ToString()));
+		// UE_LOG(LogJeJoOpenDoor, Warning, TEXT("Yaw: %f"), actor->GetActorRotation().Yaw);
 
-	// rotate from the current door position
-	this->currentYaw = FMath::FInterpTo(this->currentYaw, initialYaw, deltaTime, this->doorCloseSpeed);
-	FRotator RotateDoor{GetOwner()->GetActorRotation()};
-	RotateDoor.Yaw = this->currentYaw;
-	GetOwner()->SetActorRotation(RotateDoor);
+		// rotate from the current door position to the initial position
+		FRotator rotateDoor{ ownerActor->GetActorRotation() };
+		rotateDoor.Yaw = this->currentYaw
+			= FMath::FInterpTo(this->currentYaw, this->initialYaw, deltaTime, this->closingSpeed);
+		ownerActor->SetActorRotation(MoveTemp(rotateDoor));
+	}
 }

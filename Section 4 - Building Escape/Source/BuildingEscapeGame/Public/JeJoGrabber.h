@@ -14,6 +14,8 @@ class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere, Category = "UJeJoGrabber")
+	float range{ 1000.f };
 
 protected:
 	// Called when the game starts

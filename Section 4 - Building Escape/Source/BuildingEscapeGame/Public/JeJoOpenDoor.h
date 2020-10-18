@@ -4,10 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Engine/TriggerVolume.h"
 #include "JeJoOpenDoor.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogJeJoOpenDoor, Log, All);
+
+// forward declaration
+class AActor;
+class ATriggerVolume;
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoOpenDoor : public UActorComponent
@@ -15,32 +19,27 @@ class BUILDINGESCAPEGAME_API UJeJoOpenDoor : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
 	float initialYaw;
-
-	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
 	float currentYaw;
-
-	UPROPERTY(VisibleAnywhere, Category = "UJeJoOpenDoor")
-	float doorLastOpen;
+	float lastOpenTime;
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float doorOpenAngle;
+	float targetAngle{ 90.f };
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float doorOpenSpeed;
+	float openingSpeed{ 2.f };
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float doorCloseSpeed;
+	float closingSpeed{ 0.8f };
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	float doorCloseDelay;
+   float delayTime{ 1.f };
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	ATriggerVolume* pressurePlate;
+	ATriggerVolume* pressurePlate{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
-	AActor* actorThatOpen;
+	AActor* playerActor{ nullptr };
 
 protected:
 	// Called when the game starts
@@ -49,6 +48,7 @@ protected:
 public:
 	// Sets default values for this component's properties
 	UJeJoOpenDoor();
+
 	// Called every frame
 	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
 
