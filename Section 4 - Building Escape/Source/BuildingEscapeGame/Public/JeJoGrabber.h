@@ -4,9 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
+#include <utility>
+
 #include "JeJoGrabber.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogJeJoGrabber, Log, All);
+
+// forward declaration
+class UPhysicsHandleComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
@@ -15,7 +21,14 @@ class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UJeJoGrabber")
-	float range{ 1000.f };
+	float range{ 100.f };
+
+	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
+	UPhysicsHandleComponent* physicsHandle{ nullptr };
+
+	std::pair<FVector, FVector> GetViewPointStartEnd() const noexcept;
+
+	void RayCastTracing(FVector&& startPoint, FVector&& endPoint) const noexcept;
 
 protected:
 	// Called when the game starts
