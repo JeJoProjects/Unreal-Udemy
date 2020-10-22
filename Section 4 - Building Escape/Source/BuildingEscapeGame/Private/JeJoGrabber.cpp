@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Components/InputComponent.h"
 #include "JeJoGrabber.h"
 
 DEFINE_LOG_CATEGORY(LogJeJoGrabber)
@@ -27,8 +28,7 @@ std::pair<FVector, FVector> UJeJoGrabber::GetViewPointStartEnd() const noexcept
 }
 
 
-void UJeJoGrabber::RayCastTracing(
-	FVector&& startPoint, FVector&& endPoint) const noexcept
+void UJeJoGrabber::RayCastTracing(FVector&& startPoint, FVector&& endPoint) const noexcept
 {
 	const AActor *const ownerActor = GetOwner();
 	if (!ownerActor)
@@ -54,9 +54,9 @@ void UJeJoGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// check whether physics handler has attached to the owner actor!
 	if (const AActor* const ownerActor = GetOwner())
 	{
+		// check whether physics handler has attached to the owner actor!
 		this->physicsHandle = ownerActor->FindComponentByClass<UPhysicsHandleComponent>();
 
 		if (this->physicsHandle)
@@ -66,6 +66,18 @@ void UJeJoGrabber::BeginPlay()
 		else
 		{
 			UE_LOG(LogJeJoGrabber, Error, TEXT("No Physics handle component has not been found on actor: %s"), *(ownerActor->GetName()));
+		}
+
+		// check for the input-component and bind actions to it!
+		this->inputComponet = ownerActor->FindComponentByClass<UInputComponent>();
+		if (this->inputComponet)
+		{
+			this->inputComponet->BindAction(FName{ "Select" }, EInputEvent::IE_Pressed, this, &UJeJoGrabber::Grab);
+			this->inputComponet->BindAction(FName{ "Select" }, EInputEvent::IE_Released, this, &UJeJoGrabber::Release);
+		}
+		else
+		{
+			UE_LOG(LogJeJoGrabber, Error, TEXT("No input component has not been found on actor: %s"), *(ownerActor->GetName()));
 		}
 	}
 }
@@ -93,5 +105,17 @@ void UJeJoGrabber::TickComponent(
 		this->RayCastTracing(MoveTemp(playerViewPointStart), MoveTemp(playerViewPointEnd));
 	}
 	// log message
+}
+
+
+void UJeJoGrabber::Grab() noexcept
+{
+	UE_LOG(LogJeJoGrabber, Error, TEXT("Grabber pressed!... The owner name: %s"), *(GetOwner()->GetName()));
+}
+
+
+void UJeJoGrabber::Release() noexcept
+{
+	UE_LOG(LogJeJoGrabber, Error, TEXT("Grabber Released!"));
 }
 

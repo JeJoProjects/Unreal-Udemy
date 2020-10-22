@@ -13,6 +13,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogJeJoGrabber, Log, All);
 
 // forward declaration
 class UPhysicsHandleComponent;
+class UInputComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
@@ -24,9 +25,15 @@ private:
 	float range{ 100.f };
 
 	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
-	UPhysicsHandleComponent* physicsHandle{ nullptr };
+	UInputComponent* inputComponet{ nullptr };
+
+
+	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
+	UPhysicsHandleComponent* physicsHandle { nullptr };
+
 
 	std::pair<FVector, FVector> GetViewPointStartEnd() const noexcept;
+
 
 	void RayCastTracing(FVector&& startPoint, FVector&& endPoint) const noexcept;
 
@@ -40,4 +47,11 @@ public:
 
 	// Called every frame
 	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
+
+	UFUNCTION(BlueprintCallable, Category = "UJeJoGrabber")
+	void Grab() noexcept;
+
+
+	UFUNCTION(BlueprintCallable, Category = "UJeJoGrabber")
+	void Release() noexcept;
 };
