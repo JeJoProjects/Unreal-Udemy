@@ -1,5 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/****************************************************************************************
+ * Open door component.
+ *
+ * @Authur : JeJo
+ * @license: MIT
+****************************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,6 +21,23 @@ UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BUILDINGESCAPEGAME_API UJeJoOpenDoor : public UActorComponent
 {
 	GENERATED_BODY()
+
+public:
+	// Sets default values for this component's properties
+	UJeJoOpenDoor();
+
+	// Called every frame
+	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
+
+	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
+	void OpenDoor(const float deltaTime) noexcept;
+
+	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
+	void CloseDoor(const float deltaTime) noexcept;
+
+protected:
+	// Called when the game starts
+	void BeginPlay() override;
 
 private:
 	float initialYaw;
@@ -40,21 +61,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "UJeJoOpenDoor")
 	AActor* playerActor{ nullptr };
-
-protected:
-	// Called when the game starts
-	void BeginPlay() override;
-
-public:
-	// Sets default values for this component's properties
-	UJeJoOpenDoor();
-
-	// Called every frame
-	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
-
-	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
-	void OpenDoor(const float deltaTime) noexcept;
-
-	UFUNCTION(BlueprintCallable, Category = "UJeJoOpenDoor")
-	void CloseDoor(const float deltaTime) noexcept;
 };

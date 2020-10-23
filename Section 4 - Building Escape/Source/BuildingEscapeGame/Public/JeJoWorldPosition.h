@@ -1,5 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/****************************************************************************************
+ * World position component.
+ *
+ * @Authur : JeJo
+ * @license: MIT
+****************************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,7 +17,9 @@ class BUILDINGESCAPEGAME_API UJeJoWorldPosition : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
+public:	
+	// Sets default values for this component's properties
+	UJeJoWorldPosition();
 
 protected:
 	// Called when the game starts
@@ -22,7 +28,5 @@ protected:
 	// Called every frame
 	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
 
-public:	
-	// Sets default values for this component's properties
-	UJeJoWorldPosition();
+private:
 };
