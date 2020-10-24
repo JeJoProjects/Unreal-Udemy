@@ -9,12 +9,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
 #include <utility>
-
 #include "JeJoGrabber.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogJeJoGrabber, Log, All);
+
+template<typename T1, typename T2>
+struct BUILDINGESCAPEGAME_API SPair final : public std::pair<T1, T2>
+{
+	using std::pair<T1, T2>::pair;
+};
+
 
 // forward declaration
 class UPhysicsHandleComponent;
@@ -45,7 +50,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UJeJoGrabber")
-	float range{ 100.f };
+	float rayCastingRange{ 100.f };
 
 	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
 	UInputComponent* inputComponet{ nullptr };
@@ -54,8 +59,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
 	UPhysicsHandleComponent* physicsHandle { nullptr };
 
+	FHitResult GetFirstPhysicsBodyInReach() const noexcept;
 	void FindPhysicsHandle() noexcept;
 	void BindActions() noexcept;
-	void RayCastTracing(FVector&& startPoint, FVector&& endPoint) const noexcept;
-	std::pair<FVector, FVector> GetViewPointStartEnd() const noexcept;
+	SPair<FVector, FVector> GetViewPointStartAndEnd() const noexcept;
 };

@@ -26,32 +26,20 @@ void UJeJoGrabber::TickComponent(
 	float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
 {
 	Super::TickComponent(deltaTime, tickType, thisTickFunction);
-
-	const UWorld* const world = GetWorld();
-	if (const auto* const playerController = world->GetFirstPlayerController())
-	{
-		// get the start and end point of player's view point
-		auto [playerViewPointStart, playerViewPointEnd] = this->GetViewPointStartEnd();
-		DrawDebugLine(world, playerViewPointStart, playerViewPointEnd,
-			FColor::Green,false, 0.f, 0u, 5.f);
-
-		// ray-cast
-		this->RayCastTracing(MoveTemp(playerViewPointStart), MoveTemp(playerViewPointEnd));
-	}
-	// log message
 }
 
 
 void UJeJoGrabber::Grab() noexcept
 {
-	UE_LOG(LogJeJoGrabber, Error
-		, TEXT("Grabber pressed!... The owner name: %s"), *(GetOwner()->GetName()));
+	UE_LOG(LogJeJoGrabber, Warning
+		, TEXT("Grab() - Grabber pressed!\nThe owner name: %s"), *(GetOwner()->GetName()));
+	this->GetFirstPhysicsBodyInReach();
 }
 
 
 void UJeJoGrabber::Release() noexcept
 {
-	UE_LOG(LogJeJoGrabber, Error, TEXT("Grabber Released!"));
+	UE_LOG(LogJeJoGrabber, Warning, TEXT("Release() - Grabber Released!"));
 }
 
 
@@ -62,6 +50,55 @@ void UJeJoGrabber::BeginPlay()
 	this->BindActions();
 }
 
+
+FHitResult UJeJoGrabber::GetFirstPhysicsBodyInReach() const noexcept
+{
+	const UWorld* const world = GetWorld();
+	if (!world)
+	{
+		UE_LOG(LogJeJoGrabber, Error
+			, TEXT(":GetFirstPhysicsBodyInReach(): World not found!"));
+		return {}; // return the default constructed HitResult!
+	}
+
+	const auto* const playerController = world->GetFirstPlayerController();
+	if (!playerController)
+	{
+		UE_LOG(LogJeJoGrabber, Error
+			, TEXT(":GetFirstPhysicsBodyInReach(): PlayerController not found!"));
+		return {}; // return the default constructed HitResult!
+	}
+
+	const AActor* const ownerActor = GetOwner();
+	if (!ownerActor)
+	{
+		UE_LOG(LogJeJoGrabber, Error
+			, TEXT(":GetFirstPhysicsBodyInReach(): Owner actor not found!"));
+		return {}; // return the default constructed HitResult!
+	}
+
+	// get the start and end point of player's view point
+	const auto& [playerViewPointStart, playerViewPointEnd] = this->GetViewPointStartAndEnd();
+	DrawDebugLine(world, playerViewPointStart, playerViewPointEnd,
+		FColor::Green, false, 0.f, 0u, 5.f);
+
+	// ray-cast
+	FHitResult hitResult{ EForceInit::ForceInit };
+	FCollisionObjectQueryParams collisionChannel{ ECollisionChannel::ECC_PhysicsBody };
+	FCollisionQueryParams traceParams{ FName{}, false, ownerActor };
+
+	if (world->LineTraceSingleByObjectType(
+		hitResult, playerViewPointStart, playerViewPointEnd, collisionChannel, traceParams)
+		&& hitResult.bBlockingHit && hitResult.GetActor())
+	{
+		UE_LOG(LogJeJoGrabber, Error
+			, TEXT(":GetFirstPhysicsBodyInReach(): Line trace has hit: %s")
+			, *(hitResult.GetActor()->GetName()));
+	}
+	return hitResult; // return the HitResult!
+}
+
+
 void UJeJoGrabber::FindPhysicsHandle() noexcept
 {
 	if (const AActor* const ownerActor = GetOwner())
@@ -71,19 +108,19 @@ void UJeJoGrabber::FindPhysicsHandle() noexcept
 
 		if (this->physicsHandle)
 		{
-
+			// do something
 		}
 		else
 		{
 			UE_LOG(LogJeJoGrabber, Error
-				, TEXT("No Physics handle component has not been found on actor: %s")
+				, TEXT("FindPhysicsHandle() - No Physics handle component has not been found on actor: %s")
 				, *(ownerActor->GetName()));
 		}
 	}
 	else
 	{
 		UE_LOG(LogJeJoGrabber, Error
-			, TEXT("UJeJoGrabber::FindPhysicsHandle(): No parent actor found for the component!"));
+			, TEXT("FindPhysicsHandle() - No parent actor found for the component!"));
 	}
 }
 
@@ -94,6 +131,7 @@ void UJeJoGrabber::BindActions() noexcept
 	{
 		// check for the input-component and bind actions to it!
 		this->inputComponet = ownerActor->FindComponentByClass<UInputComponent>();
+		check(this->inputComponet);
 		if (this->inputComponet)
 		{
 			this->inputComponet->BindAction(FName{ "Select" }, EInputEvent::IE_Pressed
@@ -104,43 +142,19 @@ void UJeJoGrabber::BindActions() noexcept
 		else
 		{
 			UE_LOG(LogJeJoGrabber, Error
-				, TEXT("UJeJoGrabber::BindActions(): No input component has not been found on actor: %s")
+				, TEXT("BindActions() - No input component has not been found on actor: %s")
 				, *(ownerActor->GetName()));
 		}
 	}
 	else
 	{
 		UE_LOG(LogJeJoGrabber, Error
-			, TEXT("UJeJoGrabber::BindActions(): No parent actor found for the component!"));
+			, TEXT("BindActions() - No parent actor found for the component!"));
 	}
 }
 
 
-void UJeJoGrabber::RayCastTracing(FVector&& startPoint, FVector&& endPoint) const noexcept
-{
-	const AActor* const ownerActor = GetOwner();
-	if (!ownerActor)
-	{
-		return; // nothing to do!
-	}
-
-	FHitResult hitResult{ EForceInit::ForceInit };
-	FCollisionObjectQueryParams collisionChannel{ ECollisionChannel::ECC_PhysicsBody };
-	FCollisionQueryParams traceParams{ FName{}, false, ownerActor };
-
-	if (GetWorld()->LineTraceSingleByObjectType(hitResult, startPoint, endPoint
-		, collisionChannel, traceParams))
-	{
-		if (hitResult.bBlockingHit && hitResult.GetActor())
-		{
-			// UE_LOG(LogJeJoGrabber, Error
-			// , TEXT("Line trace has hit: %s"), *(hitResult.GetActor()->GetName()));
-		}
-	}
-}
-
-
-std::pair<FVector, FVector> UJeJoGrabber::GetViewPointStartEnd() const noexcept
+SPair<FVector, FVector> UJeJoGrabber::GetViewPointStartAndEnd() const noexcept
 {
 	if (const auto* const playerController	= GetWorld()->GetFirstPlayerController())
 	{
@@ -148,13 +162,13 @@ std::pair<FVector, FVector> UJeJoGrabber::GetViewPointStartEnd() const noexcept
 		FRotator playeViewPointrRotation{ EForceInit::ForceInit };
 		playerController->GetPlayerViewPoint(playerViewPointLocation, playeViewPointrRotation);
 
-		return std::pair<FVector, FVector>{ playerViewPointLocation
-			, playerViewPointLocation + playeViewPointrRotation.Vector() * this->range
+		return SPair<FVector, FVector>{ playerViewPointLocation, playerViewPointLocation 
+			+ playeViewPointrRotation.Vector() * this->rayCastingRange
 		};
 	}
 
 	UE_LOG(LogJeJoGrabber, Error
-		, TEXT("Could not find the start and end view point of the player"));
-	return {};
+		, TEXT("GetViewPointStartAndEnd() - Could not find the start and end view point of the player"));
+	return {}; // return an default initialized pair!
 }
 
