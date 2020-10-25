@@ -26,6 +26,13 @@ void UJeJoGrabber::TickComponent(
 	float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
 {
 	Super::TickComponent(deltaTime, tickType, thisTickFunction);
+
+	// check whether the physics handle is attached
+	if (this->physicsHandle->GrabbedComponent)
+	{
+		auto [traceStart, traceEnd] = this->GetViewPointStartAndEnd();
+		this->physicsHandle->SetTargetLocation(MoveTemp(traceEnd));
+	}
 }
 
 
@@ -33,12 +40,30 @@ void UJeJoGrabber::Grab() noexcept
 {
 	UE_LOG(LogJeJoGrabber, Warning
 		, TEXT("Grab() - Grabber pressed!\nThe owner name: %s"), *(GetOwner()->GetName()));
-	this->GetFirstPhysicsBodyInReach();
+
+		
+	// if we hit something then attach the physics handle.
+	FHitResult hitResult{ this->GetFirstPhysicsBodyInReach() };
+
+	if (hitResult.bBlockingHit && hitResult.GetActor())
+	{
+		auto [traceStart, traceEnd] = this->GetViewPointStartAndEnd();
+		UPrimitiveComponent* const componentToGrab{ hitResult.GetComponent() };
+		
+		check(componentToGrab);
+		this->physicsHandle->GrabComponentAtLocation(
+			componentToGrab, EName::NAME_None, MoveTemp(traceEnd));
+	}
+
 }
 
 
 void UJeJoGrabber::Release() noexcept
 {
+	if (this->physicsHandle->GrabbedComponent)
+	{
+		this->physicsHandle->ReleaseComponent();
+	}
 	UE_LOG(LogJeJoGrabber, Warning, TEXT("Release() - Grabber Released!"));
 }
 
@@ -78,7 +103,7 @@ FHitResult UJeJoGrabber::GetFirstPhysicsBodyInReach() const noexcept
 	}
 
 	// get the start and end point of player's view point
-	const auto& [playerViewPointStart, playerViewPointEnd] = this->GetViewPointStartAndEnd();
+	const auto [playerViewPointStart, playerViewPointEnd] = this->GetViewPointStartAndEnd();
 	DrawDebugLine(world, playerViewPointStart, playerViewPointEnd,
 		FColor::Green, false, 0.f, 0u, 5.f);
 
@@ -95,7 +120,7 @@ FHitResult UJeJoGrabber::GetFirstPhysicsBodyInReach() const noexcept
 			, TEXT(":GetFirstPhysicsBodyInReach(): Line trace has hit: %s")
 			, *(hitResult.GetActor()->GetName()));
 	}
-	return hitResult; // return the HitResult!
+	return MoveTemp(hitResult); // return the HitResult!
 }
 
 
@@ -162,7 +187,8 @@ SPair<FVector, FVector> UJeJoGrabber::GetViewPointStartAndEnd() const noexcept
 		FRotator playeViewPointrRotation{ EForceInit::ForceInit };
 		playerController->GetPlayerViewPoint(playerViewPointLocation, playeViewPointrRotation);
 
-		return SPair<FVector, FVector>{ playerViewPointLocation, playerViewPointLocation 
+		return SPair<FVector, FVector>{ playerViewPointLocation
+			, MoveTemp(playerViewPointLocation)
 			+ playeViewPointrRotation.Vector() * this->rayCastingRange
 		};
 	}
