@@ -1,7 +1,7 @@
 /****************************************************************************************
  * Grabber component
  *
- * @Authur : JeJo
+ * @Authur : JJ
  * @license: MIT
 ****************************************************************************************/
 
@@ -31,17 +31,25 @@ class BUILDINGESCAPEGAME_API UJeJoGrabber : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, Category = "JJGrabber")
+	float rayCastingRange{ 100.f };
+
+	UPROPERTY(VisibleAnywhere, Category = "JJGrabber")
+	UInputComponent* inputComponet{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, Category = "JJGrabber")
+	UPhysicsHandleComponent* physicsHandle { nullptr };
+
 	// Sets default values for this component's properties
 	UJeJoGrabber();
 
 	// Called every frame
 	void TickComponent(float, ELevelTick, FActorComponentTickFunction*) override;
 
-	UFUNCTION(BlueprintCallable, Category = "UJeJoGrabber")
+	UFUNCTION(BlueprintCallable, Category = "JJGrabber")
 	void Grab() noexcept;
 
-
-	UFUNCTION(BlueprintCallable, Category = "UJeJoGrabber")
+	UFUNCTION(BlueprintCallable, Category = "JJGrabber")
 	void Release() noexcept;
 
 protected:
@@ -49,18 +57,15 @@ protected:
 	void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "UJeJoGrabber")
-	float rayCastingRange{ 100.f };
-
-	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
-	UInputComponent* inputComponet{ nullptr };
-
-
-	UPROPERTY(VisibleAnywhere, Category = "UJeJoGrabber")
-	UPhysicsHandleComponent* physicsHandle { nullptr };
-
+	UFUNCTION(BlueprintCallable, Category = "JJGrabber")
 	FHitResult GetFirstPhysicsBodyInReach() const noexcept;
-	void FindPhysicsHandle() noexcept;
+
+	UFUNCTION(BlueprintCallable, Category = "JJGrabber")
+	void SetPhysicsHandle() noexcept;
+
+	UFUNCTION(BlueprintCallable, Category = "JJGrabber")
 	void BindActions() noexcept;
+
 	SPair<FVector, FVector> GetViewPointStartAndEnd() const noexcept;
 };
+

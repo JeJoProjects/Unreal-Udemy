@@ -1,7 +1,7 @@
 /****************************************************************************************
  * Grabber component implementation.
  *
- * @Authur : JeJo
+ * @Authur : JJ
  * @license: MIT
 ****************************************************************************************/
 
@@ -71,7 +71,7 @@ void UJeJoGrabber::Release() noexcept
 void UJeJoGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	this->FindPhysicsHandle();	
+	this->SetPhysicsHandle();	
 	this->BindActions();
 }
 
@@ -124,28 +124,23 @@ FHitResult UJeJoGrabber::GetFirstPhysicsBodyInReach() const noexcept
 }
 
 
-void UJeJoGrabber::FindPhysicsHandle() noexcept
+void UJeJoGrabber::SetPhysicsHandle() noexcept
 {
 	if (const AActor* const ownerActor = GetOwner())
 	{
 		// check whether physics handler has attached to the owner actor!
-		this->physicsHandle = ownerActor->FindComponentByClass<UPhysicsHandleComponent>();
-
-		if (this->physicsHandle)
-		{
-			// do something
-		}
-		else
+		if (this->physicsHandle = ownerActor->FindComponentByClass<UPhysicsHandleComponent>();
+			!this->physicsHandle)
 		{
 			UE_LOG(LogJeJoGrabber, Error
-				, TEXT("FindPhysicsHandle() - No Physics handle component has not been found on actor: %s")
+				, TEXT("SetPhysicsHandle() - No Physics handle component has not been found on actor: %s")
 				, *(ownerActor->GetName()));
 		}
 	}
 	else
 	{
 		UE_LOG(LogJeJoGrabber, Error
-			, TEXT("FindPhysicsHandle() - No parent actor found for the component!"));
+			, TEXT("SetPhysicsHandle() - No parent actor found for the component!"));
 	}
 }
 
