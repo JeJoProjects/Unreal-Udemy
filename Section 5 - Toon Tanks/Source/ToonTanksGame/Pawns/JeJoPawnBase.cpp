@@ -1,34 +1,34 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Pawns/JeJoPawnBase.h"
+/****************************************************************************************
+ * -------------------- implementation.
+ *
+ * @Authur : JeJo
+ * @license: MIT
+****************************************************************************************/
+#include "JeJoPawnBase.h"
+#include "Components/InputComponent.h"
 
 // Sets default values
 AJeJoPawnBase::AJeJoPawnBase()
+	: APawn{}
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
+
+void AJeJoPawnBase::Tick(float deltaTime)
+{
+	Super::Tick(deltaTime);
+}
+
+
+void AJeJoPawnBase::SetupPlayerInputComponent(UInputComponent* playerInputComponent)
+{
+	Super::SetupPlayerInputComponent(playerInputComponent);
+}
+
+
 void AJeJoPawnBase::BeginPlay()
 {
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AJeJoPawnBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AJeJoPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	Super::BeginPlay();	
 }
 
