@@ -10,7 +10,7 @@ public class ToonTanksGame : ModuleRules
 
 		// enabled C++17 standard
 		// PrivatePCHHeaderFile = "$pch.h";
-		// CppStandard = CppStandardVersion.Cpp17;
+		CppStandard = CppStandardVersion.Cpp17;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
