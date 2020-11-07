@@ -26,11 +26,6 @@ class TOONTANKSGAME_API AJeJoPawnTank : public AJeJoPawnBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JJPawnTank")
-	float moveSpeed{ 100.f };
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JJPawnTank")
-	float rotateSpeed{ 100.f };
 
 	// Sets default values for this pawn's properties
 	AJeJoPawnTank() noexcept;
@@ -49,6 +44,12 @@ private:
 
 	FVector moveDirection;
 	FQuat rotationDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JJPawnTank", meta = (AllowPrivateAccess = "true"))
+	float rotateSpeed{ 200.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "JJPawnTank", meta = (AllowPrivateAccess = "true"))
+	float moveSpeed{ 600.f };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnTank", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* springArmComp{ nullptr };
