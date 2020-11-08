@@ -43,8 +43,61 @@ void AJeJoPawnBase::SetupPlayerInputComponent(UInputComponent* playerInputComp)
 }
 
 
+void AJeJoPawnBase::RotateTurrent_Implementation(const FVector& targetMesh) noexcept
+{
+	const FVector startLocation{ this->turrentStaticMeshComp->GetComponentLocation() };
+	const FVector lookAtTargetLocation{ targetMesh.X, targetMesh.Y, startLocation.Z };
+	FRotator turrentRotation{ (lookAtTargetLocation - startLocation).Rotation() };
+	this->turrentStaticMeshComp->SetWorldRotation(MoveTemp(turrentRotation));
+}
+
+
+void AJeJoPawnBase::Fire_Implementation() const
+{
+	UE_LOG(LogJeJoPawnBase, Warning
+		, TEXT("Super::Fire_Implementation() - Player-Pawn is in the range!"));
+}
+
+
+void AJeJoPawnBase::HandleDestruction_Implementation() noexcept
+{
+
+}
+
+
 void AJeJoPawnBase::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
+
+	// check all set!
+	this->CheckComponets();
+}
+
+
+void AJeJoPawnBase::CheckComponets() const noexcept
+{
+	if (!GetWorld())
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("BeginPlay() - World has not been set!"));
+	}
+
+	if (!RootComponent)
+	{
+		UE_LOG(LogJeJoPawnBase, Error
+			, TEXT("Root component (aka Capsule Component) has not been set."));
+	}
+	if (!this->baseStaticMeshComp)
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("Base SM component has not been set."));
+	}
+	if (!this->turrentStaticMeshComp)
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("Turrent SM component has not been set."));
+	}
+	if (!this->projectileSpawnPointComp)
+	{
+		UE_LOG(LogJeJoPawnBase, Error
+			, TEXT("Projectile spawn point component has not been set."));
+	}
 }
 

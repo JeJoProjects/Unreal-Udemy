@@ -9,8 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
-#include <type_traits>
+#include "GameFramework/PlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogJeJoPawnTank)
 
@@ -41,6 +40,14 @@ void AJeJoPawnTank::Tick(float deltaTime)
 
 	this->Rotate();
 	this->Move();
+
+	if (this->playerController && this->playerController->IsValidLowLevel())
+	{
+		FHitResult traceHitResult{ EForceInit::ForceInit };
+		this->playerController->GetHitResultUnderCursor(ECC_Visibility, false, traceHitResult);
+		// call the super with the hit impact point
+		Super::RotateTurrent_Implementation(static_cast<FVector>(traceHitResult.ImpactPoint));
+	}
 }
 
 
@@ -51,8 +58,9 @@ void AJeJoPawnTank::SetupPlayerInputComponent(UInputComponent* playerInputComp)
 	// setup the input bindings
 	if (playerInputComp)
 	{
-		playerInputComp->BindAxis(FName{ "MoveForward" }, this, &AJeJoPawnTank::CalculateMoveInput);
-		playerInputComp->BindAxis(FName{ "Turn" }, this, &AJeJoPawnTank::CalculateRotationInput);
+		playerInputComp->BindAction(FName{ "Fire" }, IE_Pressed, this, &ThisClass::Fire);
+		playerInputComp->BindAxis(FName{ "MoveForward" }, this, &ThisClass::CalculateMoveInput);
+		playerInputComp->BindAxis(FName{ "Turn" }, this, &ThisClass::CalculateRotationInput);
 	}
 	else
 	{
@@ -65,7 +73,46 @@ void AJeJoPawnTank::SetupPlayerInputComponent(UInputComponent* playerInputComp)
 void AJeJoPawnTank::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// set the player controller
+	this->playerController = Cast<APlayerController>(GetController());
+
+	// check all set!
+	this->CheckComponets();
 }
+
+
+void AJeJoPawnTank::CheckComponets() const noexcept
+{
+	Super::CheckComponets();
+
+	if (!this->springArmComp)
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("Spring arm component has not been set."));
+	}
+	if (!this->cameraComp)
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("Camera component has not been set."));
+	}
+	if (!this->playerController)
+	{
+		UE_LOG(LogJeJoPawnBase, Error, TEXT("Player controller has not been set."));
+	}
+}
+
+
+void AJeJoPawnTank::Fire_Implementation() const
+{
+
+}
+
+
+void AJeJoPawnTank::HandleDestruction_Implementation() noexcept
+{
+	// call base pawn class implementation to play effect
+	Super::HandleDestruction_Implementation();
+}
+
 
 void AJeJoPawnTank::CalculateMoveInput(const float value) noexcept
 {
@@ -74,6 +121,7 @@ void AJeJoPawnTank::CalculateMoveInput(const float value) noexcept
 	};
 }
 
+
 void AJeJoPawnTank::CalculateRotationInput(const float value) noexcept
 {
 	const float rotateAmount = value * this->rotateSpeed * GetWorld()->DeltaTimeSeconds;
@@ -81,10 +129,12 @@ void AJeJoPawnTank::CalculateRotationInput(const float value) noexcept
 	this->rotationDirection = FQuat{ MoveTemp(rotation) };
 }
 
+
 void AJeJoPawnTank::Move() noexcept
 {
 	AddActorLocalOffset(this->moveDirection, true);
 }
+
 
 void AJeJoPawnTank::Rotate() noexcept
 {

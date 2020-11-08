@@ -16,6 +16,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogJeJoPawnTank, All, All);
 class UInputComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class APlayerController;
 
 /*!
  * 
@@ -40,8 +41,11 @@ protected:
 	// Called when the game starts or when spawned
 	void BeginPlay() override;
 
-private:
+	void CheckComponets() const noexcept override;
+	void Fire_Implementation() const override;
+	void HandleDestruction_Implementation() noexcept override;
 
+private:
 	FVector moveDirection;
 	FQuat rotationDirection;
 
@@ -56,6 +60,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnTank", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* cameraComp{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnTank", meta = (AllowPrivateAccess = "true"))
+	APlayerController* playerController{ nullptr };
 
 	void CalculateMoveInput(const float value) noexcept;
 

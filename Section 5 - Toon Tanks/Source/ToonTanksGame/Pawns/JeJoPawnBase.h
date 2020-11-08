@@ -34,8 +34,22 @@ public:
 	void SetupPlayerInputComponent(UInputComponent* playerInputComp) override;
 
 protected:
+	UFUNCTION(BlueprintNativeEvent, Category = "JJPawnBase")
+	void RotateTurrent(const FVector& lookAtTarget);
+	virtual void RotateTurrent_Implementation(const FVector& targetMesh) noexcept;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "JJPawnBase")
+	void Fire();
+	virtual void Fire_Implementation() const;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "JJPawnBase")
+	void HandleDestruction();
+	virtual void HandleDestruction_Implementation() noexcept;
+
 	// Called when the game starts or when spawned
 	void BeginPlay() override;
+
+	virtual void CheckComponets() const noexcept;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnBase", meta = (AllowPrivateAccess = "true"))
@@ -49,6 +63,5 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnBase", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* projectileSpawnPointComp{ nullptr };
-
 };
 
