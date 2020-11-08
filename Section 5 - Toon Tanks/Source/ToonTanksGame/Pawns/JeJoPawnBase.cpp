@@ -52,7 +52,7 @@ void AJeJoPawnBase::RotateTurrent_Implementation(const FVector& targetMesh) noex
 }
 
 
-void AJeJoPawnBase::Fire_Implementation() const
+void AJeJoPawnBase::Fire_Implementation() noexcept
 {
 	UE_LOG(LogJeJoPawnBase, Warning
 		, TEXT("Super::Fire_Implementation() - Player-Pawn is in the range!"));

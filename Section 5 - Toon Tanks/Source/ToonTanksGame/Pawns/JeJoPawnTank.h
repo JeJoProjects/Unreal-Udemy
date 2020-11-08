@@ -42,7 +42,7 @@ protected:
 	void BeginPlay() override;
 
 	void CheckComponets() const noexcept override;
-	void Fire_Implementation() const override;
+	void Fire_Implementation() noexcept override;
 	void HandleDestruction_Implementation() noexcept override;
 
 private:

@@ -56,6 +56,13 @@ void AJeJoPawnTurrent::BeginPlay()
 		, &ThisClass::CheckFireCondition, this->fireRate, true);
 }
 
+
+void AJeJoPawnTurrent::Fire_Implementation() noexcept
+{
+	Super::Fire_Implementation();
+}
+
+
 void AJeJoPawnTurrent::HandleDestruction_Implementation() noexcept
 {
 	// call base pawn class implementation to play effect
@@ -63,14 +70,14 @@ void AJeJoPawnTurrent::HandleDestruction_Implementation() noexcept
 }
 
 
-void AJeJoPawnTurrent::CheckFireCondition() const noexcept
+void AJeJoPawnTurrent::CheckFireCondition() noexcept
 {
 	UE_LOG(LogJeJoPawnTurrent, Log, TEXT("CheckFireCondition() - Fired condition checked!"));
 
 	// if there is a valid player, which is in the range, then do fire.
 	if (this->playerPawn && this->GetDistanceToPlayer() <= this->distanceRange)
 	{
-		Super::Fire_Implementation();
+		this->Fire_Implementation();
 	}
 }
 

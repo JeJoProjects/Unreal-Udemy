@@ -58,7 +58,7 @@ void AJeJoPawnTank::SetupPlayerInputComponent(UInputComponent* playerInputComp)
 	// setup the input bindings
 	if (playerInputComp)
 	{
-		playerInputComp->BindAction(FName{ "Fire" }, IE_Pressed, this, &ThisClass::Fire);
+		playerInputComp->BindAction(FName{ "Fire" }, IE_Pressed, this, &ThisClass::Fire_Implementation);
 		playerInputComp->BindAxis(FName{ "MoveForward" }, this, &ThisClass::CalculateMoveInput);
 		playerInputComp->BindAxis(FName{ "Turn" }, this, &ThisClass::CalculateRotationInput);
 	}
@@ -101,9 +101,9 @@ void AJeJoPawnTank::CheckComponets() const noexcept
 }
 
 
-void AJeJoPawnTank::Fire_Implementation() const
+void AJeJoPawnTank::Fire_Implementation() noexcept
 {
-
+	Super::Fire_Implementation();
 }
 
 

@@ -40,7 +40,7 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "JJPawnBase")
 	void Fire();
-	virtual void Fire_Implementation() const;
+	virtual void Fire_Implementation() noexcept;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "JJPawnBase")
 	void HandleDestruction();

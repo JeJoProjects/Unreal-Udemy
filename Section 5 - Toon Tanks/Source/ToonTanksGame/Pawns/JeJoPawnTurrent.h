@@ -34,6 +34,7 @@ protected:
 	// Called when the game starts or when spawned
 	void BeginPlay() override;
 
+	void Fire_Implementation() noexcept override;
 	void HandleDestruction_Implementation() noexcept override;
 
 private:
@@ -48,6 +49,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "JJPawnTurrent", meta = (AllowPrivateAccess = "true"))
 	AJeJoPawnTank* playerPawn{ nullptr };
 
-	void CheckFireCondition() const noexcept;
+	void CheckFireCondition() noexcept;
 };
 
