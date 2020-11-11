@@ -30,6 +30,7 @@ void AJeJoPawnTurrent::Tick(float deltaTime)
 	}
 }
 
+
 float AJeJoPawnTurrent::GetDistanceToPlayer() const noexcept
 {
 	if (!this->playerPawn)
